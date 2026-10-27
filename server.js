@@ -20,6 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(uploadsDir));
 
+app.get("/", (req, res) => {
+    res.json({ status: "success", message: "E-Cube PCB Backend is Running Live!" });
+});
+
 
 // =====================================================
 // MYSQL CONNECTION
