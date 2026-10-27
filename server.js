@@ -24,6 +24,23 @@ app.get("/", (req, res) => {
     res.json({ status: "success", message: "E-Cube PCB Backend is Running Live!" });
 });
 
+// =====================================================
+// ADMIN SECURITY AUTHENTICATION MIDDLEWARE
+// =====================================================
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin12345";
+
+function verifyAdmin(req, res, next) {
+    const authHeader = req.headers["x-admin-key"] || req.headers["authorization"] || req.query.admin_key;
+    if (authHeader && (authHeader === ADMIN_PASSWORD || authHeader === `Bearer ${ADMIN_PASSWORD}`)) {
+        return next();
+    }
+    return res.status(401).json({
+        success: false,
+        message: "Access Denied: Admin authentication required to access this database resource."
+    });
+}
+
 
 // =====================================================
 // MYSQL CONNECTION
@@ -435,7 +452,7 @@ app.get("/api/pricing-config", async (_req, res) => {
 // ADMIN
 // =====================================================
 
-app.post("/api/pricing-config", async (req, res) => {
+app.post("/api/pricing-config", verifyAdmin, async (req, res) => {
 
     try {
 
@@ -937,7 +954,7 @@ app.post("/api/customers/login", async (req, res) => {
 // ADMIN DASHBOARD
 // =====================================================
 
-app.get("/api/customers", async (_req, res) => {
+app.get("/api/customers", verifyAdmin, async (_req, res) => {
 
     try {
 
@@ -1398,7 +1415,7 @@ app.put("/api/customers/:id", async (req, res) => {
 // GET ALL QUOTES
 // =====================================================
 
-app.get("/api/quotes", async (_req, res) => {
+app.get("/api/quotes", verifyAdmin, async (_req, res) => {
 
     try {
 
@@ -2546,7 +2563,7 @@ app.put("/api/quotes/:id", async (req, res) => {
 // DELETE QUOTE
 // =====================================================
 
-app.delete("/api/quotes/:id", async (req, res) => {
+app.delete("/api/quotes/:id", verifyAdmin, async (req, res) => {
 
     try {
 

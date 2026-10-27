@@ -1,5 +1,6 @@
-
+require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
 const mysql = require("mysql2/promise");
+
 
 const sslConfig = (process.env.DB_SSL === "true" || (process.env.DB_HOST && !["127.0.0.1", "localhost"].includes(process.env.DB_HOST)))
     ? { minVersion: "TLSv1.2", rejectUnauthorized: true }
